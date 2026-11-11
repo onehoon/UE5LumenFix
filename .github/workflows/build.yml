@@ -10,7 +10,7 @@ on:
   push:
     branches: [ "master" ]
   pull_request:
-    branches: [ "master", "refactor/asi" ]
+    branches: [ "master", "refactor/asi", "refactor/IntelReflexFix" ]
     
 env:
   # Path to the solution file relative to the root of the project.
@@ -51,4 +51,10 @@ jobs:
       with:
         name: UE5LumenFix-ASI
         path: ${{ github.workspace }}\x64\Release\UE5LumenFix.asi
+        if-no-files-found: error
+
+    - uses: actions/upload-artifact@v7
+      with:
+        name: IntelReflexFix-ASI
+        path: ${{ github.workspace }}\x64\Release\IntelReflexFix.asi
         if-no-files-found: error
