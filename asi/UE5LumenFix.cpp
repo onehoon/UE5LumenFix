@@ -9,8 +9,8 @@
 namespace {
 
 constexpr char kVersion[] = "1.0.0";
-// IUnknown (3), IDXGIObject (4), IDXGIAdapter (4), Adapter1/2 (1 each), then two Adapter3 methods.
-constexpr UINT kQueryVideoMemoryInfoVtableIndex = 15;
+// IUnknown (3), IDXGIObject (4), IDXGIAdapter (3), Adapter1/2 (1 each), then two Adapter3 methods.
+constexpr UINT kQueryVideoMemoryInfoVtableIndex = 14;
 constexpr ULONGLONG kOverrideDurationMs = 60'000;
 constexpr ULONGLONG kOverrideNotStarted = static_cast<ULONGLONG>(-1);
 constexpr UINT64 kNonLocalBudget = 2'147'483'648ULL;
