@@ -90,18 +90,12 @@
     <ClInclude Include="dxgi_proxy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inireader/INIReader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dxgi_proxy_conf.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="dxgi_proxy_log.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="dxgi_proxy_adapter.cpp">
@@ -124,5 +118,8 @@
     <None Include="source.def">
       <Filter>Source Files</Filter>
     </None>
+    <ResourceCompile Include="version.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

@@ -74,9 +74,6 @@ Proxy::Proxy()
 		DXGI_P_LOGF("\t%s: 0x%p", name, out);
 	};
 
-	log::init(config);
-	DXGI_P_LOGF("config:\n%s\n", config.toString().data());
-
 	const auto &dxgi = config.dxgiSection();
 	if(const auto m = LoadLibrary(dxgi.dll_path.data())) {
 		get_proc_addr(m, "CreateDXGIFactory", create_factory_fn);
