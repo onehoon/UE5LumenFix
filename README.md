@@ -6,7 +6,13 @@ UE5 do not allow 3D textures for GI usage on these GPUs
 and Lumen GI automatically disabled in this case.
 This proxy allows GPU memory size spoofing which force UE5 treat GPU as dedicated.
 
-## Installation
+## ASI installation (OptiScaler)
+* Place `UE5LumenFix.asi` in `OptiScaler/plugins/`
+* Enable the existing `[Plugins] LoadAsiPlugins=true` setting in OptiScaler
+* No INI or other configuration file is used
+* The ASI overwrites `OptiScaler/plugins/UE5LumenFix.log` on each game launch
+
+## Original DXGI proxy fallback
 * To use it just place `dxgi.dll` and `dxgi_proxy.ini` next to executable
 * Edit `dxgi_proxy.ini` if needed
 
