@@ -6,9 +6,15 @@ UE5 do not allow 3D textures for GI usage on these GPUs
 and Lumen GI automatically disabled in this case.
 This proxy allows GPU memory size spoofing which force UE5 treat GPU as dedicated.
 
-## Installation
-* To use it just place `dxgi.dll` and `dxgi_proxy.ini` next to executable
-* Edit `dxgi_proxy.ini` if needed
+## Installation (fixed DXGI proxy)
+* Place the x64 Release `dxgi.dll` next to the game's executable.
+* No INI or log file is used or generated.
+* `dxgi.dll` retains the existing DXGI factory/adapter proxy implementation.
+* Fixed behavior: inspect the adapter's initial non-local Budget to identify the iGPU case, then override its non-local Budget to **2 GiB** for the first **60 seconds** after adapter creation.
+* No vendor-ID check, vendor/device spoof, or LOCAL Budget override.
+* Windows DLL version-info **FileDescription** and **ProductName** are both `UE5LumenFix` for identification during cleanup.
+* The proxy occupies the `dxgi.dll` name; do not place another file with that same name alongside it.
+
 
 ## UE5 LumenGI on integrated cards problem description
 UE5 GPU type (integrated/dedicated) detection algo:

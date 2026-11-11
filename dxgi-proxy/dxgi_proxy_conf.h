@@ -2,25 +2,19 @@
 
 namespace dxgi_proxy {
 
+// Fixed configuration: no INI, vendor-ID spoofing, or runtime options.
 class Config final
 {
 public:
-	inline static const std::string sIniFilePath{"dxgi_proxy.ini"};
-
-	struct Log final
-	{
-		bool enable{false};
-	};
-
 	struct Override final
 	{
-		bool only_igpu{false};
+		bool only_igpu{true};
 		std::optional<std::wstring> gpu_description;
 		std::optional<UINT> gpu_vendor_id;
 		std::optional<UINT> gpu_device_id;
 		std::optional<SIZE_T> gpu_dedicated_memory_size;
-		std::optional<SIZE_T> gpu_non_local_memory_size;
-		std::optional<std::chrono::seconds> disable_after;
+		std::optional<SIZE_T> gpu_non_local_memory_size{static_cast<SIZE_T>(2147483648ULL)};
+		std::optional<std::chrono::seconds> disable_after{std::chrono::seconds{60}};
 	};
 
 	struct DXGI final
@@ -30,16 +24,12 @@ public:
 		bool enable_adapter_proxy{true};
 	};
 
-	explicit Config(const std::string &ini_file_path = sIniFilePath);
+	Config();
 
-	[[nodiscard]] const Log &logSection() const noexcept { return log_section; }
 	[[nodiscard]] const DXGI &dxgiSection() const noexcept { return dxgi_section; }
 	[[nodiscard]] const Override &overrideSection() const noexcept { return override_section; }
 
-	[[nodiscard]] std::string toString() const;
-
 private:
-	Log log_section;
 	Override override_section;
 	DXGI dxgi_section;
 };
