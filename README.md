@@ -12,6 +12,22 @@ This proxy allows GPU memory size spoofing which force UE5 treat GPU as dedicate
 * No INI or other configuration file is used
 * The ASI overwrites `OptiScaler/plugins/UE5LumenFix.log` on each game launch
 
+## Intel ReflexFix ASI
+* Place `IntelReflexFix.asi` in `OptiScaler/plugins/` alongside upstream OptiScaler and REFramework.
+* Set these existing OptiScaler options; do not add the `-loadlate` suffix:
+  ```ini
+  [Plugins]
+  LoadAsiPlugins=true
+
+  [Spoofing]
+  Dxgi=false
+  StreamlineSpoofing=true
+  DxgiVRAM=auto
+  ```
+* The ASI only targets `re9.exe` and `pragmata.exe`. It changes the VendorId, DeviceId, and description only for Intel adapter descriptors requested directly by the game executable.
+* Test with upstream OptiScaler and REFramework only; do not combine it with OptiPatcher or another GPU-identity ASI.
+* Manually compare the Reflex option with and without the ASI in both games, then confirm XeFG and normal launch, gameplay, exit, and relaunch behavior. This ASI has not been hardware-validated.
+
 ## Original DXGI proxy fallback
 * To use it just place `dxgi.dll` and `dxgi_proxy.ini` next to executable
 * Edit `dxgi_proxy.ini` if needed
