@@ -5,6 +5,8 @@ VisualStudioVersion = 17.8.34309.116
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dxgi-proxy", "dxgi-proxy\dxgi-proxy.vcxproj", "{A0C50BA1-BDA4-40FB-BF6D-086B4411D253}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UE5LumenFix", "asi\UE5LumenFix.vcxproj", "{50B8EF26-8DC0-4A55-84AD-CFBC5E4430B1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,12 @@ Global
 		{A0C50BA1-BDA4-40FB-BF6D-086B4411D253}.Release|x64.Build.0 = Release|x64
 		{A0C50BA1-BDA4-40FB-BF6D-086B4411D253}.Release|x86.ActiveCfg = Release|Win32
 		{A0C50BA1-BDA4-40FB-BF6D-086B4411D253}.Release|x86.Build.0 = Release|Win32
+		{50B8EF26-8DC0-4A55-84AD-CFBC5E4430B1}.Debug|x64.ActiveCfg = Debug|x64
+		{50B8EF26-8DC0-4A55-84AD-CFBC5E4430B1}.Debug|x64.Build.0 = Debug|x64
+		{50B8EF26-8DC0-4A55-84AD-CFBC5E4430B1}.Debug|x86.ActiveCfg = Debug|x64
+		{50B8EF26-8DC0-4A55-84AD-CFBC5E4430B1}.Release|x64.ActiveCfg = Release|x64
+		{50B8EF26-8DC0-4A55-84AD-CFBC5E4430B1}.Release|x64.Build.0 = Release|x64
+		{50B8EF26-8DC0-4A55-84AD-CFBC5E4430B1}.Release|x86.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
