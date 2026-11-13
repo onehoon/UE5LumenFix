@@ -337,8 +337,10 @@ HRESULT invokeDescriptorHook(
 {
 	if(original == nullptr) {
 		const CallerInfo caller = resolveCaller(callerAddress);
-		logDescriptorCall(
-		    method, callerAddress, timing, caller, E_UNEXPECTED, false, 0, 0, false, "original_missing");
+		if(caller.isGame) {
+			logDescriptorCall(
+			    method, callerAddress, timing, caller, E_UNEXPECTED, false, 0, 0, false, "original_missing");
+		}
 		return E_UNEXPECTED;
 	}
 
@@ -367,17 +369,19 @@ HRESULT invokeDescriptorHook(
 		reason = "eligible_game_intel_adapter";
 	}
 
-	logDescriptorCall(
-	    method,
-	    callerAddress,
-	    timing,
-	    caller,
-	    result,
-	    hasOriginalDescriptor,
-	    originalVendorId,
-	    originalDeviceId,
-	    rewritten,
-	    reason);
+	if(caller.isGame) {
+		logDescriptorCall(
+		    method,
+		    callerAddress,
+		    timing,
+		    caller,
+		    result,
+		    hasOriginalDescriptor,
+		    originalVendorId,
+		    originalDeviceId,
+		    rewritten,
+		    reason);
+	}
 	return result;
 }
 

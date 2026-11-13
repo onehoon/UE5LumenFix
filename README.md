@@ -24,10 +24,10 @@ This proxy allows GPU memory size spoofing which force UE5 treat GPU as dedicate
   StreamlineSpoofing=true
   DxgiVRAM=auto
   ```
-* The ASI overwrites `OptiScaler/plugins/IntelReflexFix.log` on each launch. It logs every intercepted DXGI descriptor query; long sessions can create large logs and add diagnostic overhead. Hardware validation is still required.
+* The ASI overwrites `OptiScaler/plugins/IntelReflexFix.log` on each launch. Per-call entries include only queries whose immediate caller is the game executable; third-party DLL calls are intentionally omitted, so their absence is expected. The repository owner reported one test session each in PRAGMATA and re9.exe; additional hardware validation is still needed. Long sessions can create large logs and add diagnostic overhead.
 * The ASI only targets `re9.exe` and `pragmata.exe`. It changes the VendorId, DeviceId, and description only for Intel adapter descriptors requested directly by the game executable.
 * Test with upstream OptiScaler and REFramework only; do not combine it with OptiPatcher or another GPU-identity ASI.
-* Manually compare the Reflex option with and without the ASI in both games, then confirm XeFG and normal launch, gameplay, exit, and relaunch behavior. This ASI has not been hardware-validated.
+* Compare the Reflex option with and without the ASI in both games, then confirm XeFG and normal launch, gameplay, exit, and relaunch behavior on your setup.
 
 ## Original DXGI proxy fallback
 * To use it just place `dxgi.dll` and `dxgi_proxy.ini` next to executable
