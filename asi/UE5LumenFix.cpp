@@ -34,6 +34,8 @@ std::atomic<bool> g_firstQueryLogged{false};
 std::atomic<bool> g_firstOverrideLogged{false};
 std::atomic<bool> g_expiryLogged{false};
 std::atomic<ULONGLONG> g_overrideStartedAt{kOverrideNotStarted};
+std::atomic<bool> g_startRequested{false};
+ULONGLONG g_initializeTick = 0;
 
 void logMessage(const char *format, ...) noexcept
 {
@@ -250,6 +252,25 @@ HRESULT STDMETHODCALLTYPE hookQueryVideoMemoryInfo(
 	return result;
 }
 
+DWORD WINAPI initializeWorker(LPVOID)
+{
+	const ULONGLONG workerTick = GetTickCount64();
+	initializeLog();
+	logMessage("InitializeASI entered");
+	logMessage("UE5LumenFix ASI version %s; process id=%lu", kVersion, GetCurrentProcessId());
+	logMessage(
+	    "worker started: delay=%llums",
+	    static_cast<unsigned long long>(workerTick - g_initializeTick));
+
+	const HRESULT result = installHook();
+	if(SUCCEEDED(result)) {
+		logMessage("hook installed");
+	} else {
+		logMessage("hook installation failed: HRESULT=0x%08lX", static_cast<unsigned long>(result));
+	}
+	return 0;
+}
+
 }  // namespace
 
 extern "C" BOOL WINAPI DllMain(HMODULE module, DWORD reason, LPVOID)
@@ -262,14 +283,17 @@ extern "C" BOOL WINAPI DllMain(HMODULE module, DWORD reason, LPVOID)
 
 extern "C" __declspec(dllexport) void InitializeASI()
 {
-	initializeLog();
-	logMessage("InitializeASI entered");
-	logMessage("UE5LumenFix ASI version %s; process id=%lu", kVersion, GetCurrentProcessId());
-
-	const HRESULT result = installHook();
-	if(SUCCEEDED(result)) {
-		logMessage("hook installed");
-	} else {
-		logMessage("hook installation failed: HRESULT=0x%08lX", static_cast<unsigned long>(result));
+	const ULONGLONG entryTick = GetTickCount64();
+	bool expected = false;
+	if(!g_startRequested.compare_exchange_strong(expected, true)) {
+		return;
 	}
+
+	g_initializeTick = entryTick;
+	HANDLE worker = CreateThread(nullptr, 0, initializeWorker, nullptr, 0, nullptr);
+	if(worker == nullptr) {
+		OutputDebugStringA("[UE5LumenFix] Failed to start hook worker\n");
+		return;
+	}
+	CloseHandle(worker);
 }
