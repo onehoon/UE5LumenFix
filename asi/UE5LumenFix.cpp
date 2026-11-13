@@ -256,11 +256,11 @@ DWORD WINAPI initializeWorker(LPVOID)
 {
 	const ULONGLONG workerTick = GetTickCount64();
 	initializeLog();
-	logMessage("InitializeASI entered");
-	logMessage("UE5LumenFix ASI version %s; process id=%lu", kVersion, GetCurrentProcessId());
 	logMessage(
 	    "worker started: delay=%llums",
 	    static_cast<unsigned long long>(workerTick - g_initializeTick));
+	logMessage("InitializeASI entered");
+	logMessage("UE5LumenFix ASI version %s; process id=%lu", kVersion, GetCurrentProcessId());
 
 	const HRESULT result = installHook();
 	if(SUCCEEDED(result)) {
