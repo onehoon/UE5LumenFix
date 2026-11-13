@@ -10,7 +10,7 @@ on:
   push:
     branches: [ "master" ]
   pull_request:
-    branches: [ "master", "refactor/asi" ]
+    branches: [ "master", "refactor/asi", "refactor/UE5LumenFix-dllmain-asi" ]
     
 env:
   # Path to the solution file relative to the root of the project.

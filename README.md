@@ -10,7 +10,7 @@ This proxy allows GPU memory size spoofing which force UE5 treat GPU as dedicate
 * Place `UE5LumenFix.asi` in `OptiScaler/plugins/`
 * Enable the existing `[Plugins] LoadAsiPlugins=true` setting in OptiScaler
 * No INI or other configuration file is used
-* The ASI overwrites `OptiScaler/plugins/UE5LumenFix.log` on each game launch
+* Initialization runs on a worker thread to keep DXGI setup out of `DllMain`; `OptiScaler/plugins/UE5LumenFix.log` is overwritten on each launch and records sparse first-query, first-override, and expiry diagnostics
 
 ## Original DXGI proxy fallback
 * To use it just place `dxgi.dll` and `dxgi_proxy.ini` next to executable
