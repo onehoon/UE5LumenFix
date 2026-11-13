@@ -46,6 +46,19 @@ struct CallerInfo {
 	char moduleName[MAX_PATH] = "unknown";
 };
 
+struct CallTiming {
+	ULONGLONG tick = 0;
+	SYSTEMTIME wallClock{};
+};
+
+CallTiming captureCallTiming() noexcept
+{
+	CallTiming timing{};
+	timing.tick = GetTickCount64();
+	GetLocalTime(&timing.wallClock);
+	return timing;
+}
+
 void formatWallClock(const SYSTEMTIME &time, char *output, size_t outputCount) noexcept
 {
 	_snprintf_s(
@@ -233,6 +246,7 @@ bool openLogFile() noexcept
 void logDescriptorCall(
 	const char *method,
 	void *callerAddress,
+	const CallTiming &timing,
 	const CallerInfo &caller,
 	HRESULT result,
 	bool hasOriginalDescriptor,
@@ -246,7 +260,6 @@ void logDescriptorCall(
 	}
 
 	AcquireSRWLockExclusive(&g_logLock);
-	const ULONGLONG tick = GetTickCount64();
 	const ULONGLONG sequence = ++g_callSequence;
 	const char *deltaText = "first";
 	char deltaBuffer[48]{};
@@ -255,11 +268,11 @@ void logDescriptorCall(
 		    deltaBuffer,
 		    sizeof(deltaBuffer),
 		    _TRUNCATE,
-		    "%llums",
-		    static_cast<unsigned long long>(tick - g_lastCallTick));
+		    "%+llums",
+		    static_cast<long long>(timing.tick) - static_cast<long long>(g_lastCallTick));
 		deltaText = deltaBuffer;
 	}
-	g_lastCallTick = tick;
+	g_lastCallTick = timing.tick;
 
 	char originalIds[32] = "n/a";
 	if(hasOriginalDescriptor) {
@@ -301,9 +314,7 @@ void logDescriptorCall(
 	    reason,
 	    resultingIds);
 
-	SYSTEMTIME wallClock{};
-	GetLocalTime(&wallClock);
-	writeLogLineLocked(wallClock, tick, message);
+	writeLogLineLocked(timing.wallClock, timing.tick, message);
 	ReleaseSRWLockExclusive(&g_logLock);
 }
 
@@ -321,11 +332,13 @@ HRESULT invokeDescriptorHook(
 	Adapter *adapter,
 	Descriptor *descriptor,
 	Function original,
-	void *callerAddress)
+	void *callerAddress,
+	const CallTiming &timing)
 {
 	if(original == nullptr) {
 		const CallerInfo caller = resolveCaller(callerAddress);
-		logDescriptorCall(method, callerAddress, caller, E_UNEXPECTED, false, 0, 0, false, "original_missing");
+		logDescriptorCall(
+		    method, callerAddress, timing, caller, E_UNEXPECTED, false, 0, 0, false, "original_missing");
 		return E_UNEXPECTED;
 	}
 
@@ -357,6 +370,7 @@ HRESULT invokeDescriptorHook(
 	logDescriptorCall(
 	    method,
 	    callerAddress,
+	    timing,
 	    caller,
 	    result,
 	    hasOriginalDescriptor,
@@ -370,45 +384,53 @@ HRESULT invokeDescriptorHook(
 HRESULT STDMETHODCALLTYPE hookGetDesc(IDXGIAdapter *adapter, DXGI_ADAPTER_DESC *descriptor)
 {
 	void *callerAddress = _ReturnAddress();
+	const CallTiming timing = captureCallTiming();
 	return invokeDescriptorHook(
 	    "GetDesc",
 	    adapter,
 	    descriptor,
 	    g_originalGetDesc.load(std::memory_order_acquire),
-	    callerAddress);
+	    callerAddress,
+	    timing);
 }
 
 HRESULT STDMETHODCALLTYPE hookGetDesc1(IDXGIAdapter1 *adapter, DXGI_ADAPTER_DESC1 *descriptor)
 {
 	void *callerAddress = _ReturnAddress();
+	const CallTiming timing = captureCallTiming();
 	return invokeDescriptorHook(
 	    "GetDesc1",
 	    adapter,
 	    descriptor,
 	    g_originalGetDesc1.load(std::memory_order_acquire),
-	    callerAddress);
+	    callerAddress,
+	    timing);
 }
 
 HRESULT STDMETHODCALLTYPE hookGetDesc2(IDXGIAdapter2 *adapter, DXGI_ADAPTER_DESC2 *descriptor)
 {
 	void *callerAddress = _ReturnAddress();
+	const CallTiming timing = captureCallTiming();
 	return invokeDescriptorHook(
 	    "GetDesc2",
 	    adapter,
 	    descriptor,
 	    g_originalGetDesc2.load(std::memory_order_acquire),
-	    callerAddress);
+	    callerAddress,
+	    timing);
 }
 
 HRESULT STDMETHODCALLTYPE hookGetDesc3(IDXGIAdapter4 *adapter, DXGI_ADAPTER_DESC3 *descriptor)
 {
 	void *callerAddress = _ReturnAddress();
+	const CallTiming timing = captureCallTiming();
 	return invokeDescriptorHook(
 	    "GetDesc3",
 	    adapter,
 	    descriptor,
 	    g_originalGetDesc3.load(std::memory_order_acquire),
-	    callerAddress);
+	    callerAddress,
+	    timing);
 }
 
 template <typename Function>
